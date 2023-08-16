@@ -34,7 +34,7 @@ final class XDataProvider extends BaseProvider
     private function hydrateTransactionObject(array $transactions): array
     {
         return array_map(
-            callback: fn($transaction) => new Transaction(
+            callback: fn ($transaction) => new Transaction(
                 id: $transaction['parentIdentification'],
                 email: $transaction['parentEmail'],
                 amount: $transaction['parentAmount'],

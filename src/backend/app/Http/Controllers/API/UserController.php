@@ -17,7 +17,7 @@ class UserController
      * @return AnonymousResourceCollection
      */
     public function index(
-        GetUsersRequest $request, 
+        GetUsersRequest $request,
         TransactionInterface $transactionService
     ): AnonymousResourceCollection {
         $transactions = $transactionService->getTransactions();

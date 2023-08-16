@@ -31,4 +31,5 @@ Route::group(
                 Route::get(uri: '/', action: [UserController::class, 'index'])->name(name: 'index');
             }
         );
-    });
+    }
+);

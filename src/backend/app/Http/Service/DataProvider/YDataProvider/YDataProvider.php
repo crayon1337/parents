@@ -31,7 +31,7 @@ final class YDataProvider extends BaseProvider
     private function hydrateTransactionObject(array $transactions): array
     {
         return array_map(
-            callback: fn($transaction) => new Transaction(
+            callback: fn ($transaction) => new Transaction(
                 id: $transaction['id'],
                 email: $transaction['email'],
                 amount: $transaction['balance'],
