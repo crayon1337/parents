@@ -36,8 +36,8 @@ jobs:
         working-directory: ./src/backend
         run: php -r "file_exists('.env') || copy('.env.example', '.env');" # If .env exist, we use that, if otherwise, copy .env.example to .env and use that instead
       - name: Install Dependencies
-        if: steps.vendor-cache.outputs.cache-hit != 'true'
         working-directory: ./src/backend
+        if: steps.vendor-cache.outputs.cache-hit != 'true'
         run: composer install
       - name: Generate key
         working-directory: ./src/backend
