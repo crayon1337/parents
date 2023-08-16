@@ -11,8 +11,22 @@ The application Docker container is using Ubuntu 22.04
 
 ## Installation
 - Clone this repository
-- Execute `docker-compose up -d`
-- The application will be accessible on `http://localhost:8080`
+- Build the application docker container using
+```bash 
+$ docker-compose build app
+```
+- Run the environment in background
+```bash
+$ docker-compose up -d 
+```
+- Install the project
+```bash 
+$ cd parents
+$ docker-compose exec app cp .env.example .env
+$ docker-compose exec app composer install
+$ docker-compose exec app php artisan key:generate
+```
+- The application will be accessible on `http://localhost:8000`
 
 ## Providers
 The current supported providers are X and Y and both of them provides data to our application through JSON files. 
@@ -27,12 +41,12 @@ I will also be using [Laravel Pint](https://laravel.com/docs/10.x/pint) in order
 
 If you would like to fix the errors detected within your application
 ```bash 
-./vendor/bin/pint
+$ ./vendor/bin/pint
 ```
 
 If you would like Pint to simply inspect your code for style errors without actually changing the files, you may use the --test option:
 ```bash
-./vendor/bin/pint --test 
+$ ./vendor/bin/pint --test 
 ```
 
 ## Tests

@@ -1,0 +1,33 @@
+version: "3.7"
+services:
+  app:
+    build:
+      args:
+        user: parents
+        uid: 1000
+      context: ./
+      dockerfile: Dockerfile
+    image: parents-application
+    container_name: parents.app
+    restart: unless-stopped
+    working_dir: /var/www/
+    volumes:
+      - ./src/backend:/var/www
+    networks:
+      - parents_network
+
+  nginx:
+    image: nginx:1.17-alpine
+    container_name: parents.nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - ./src/backend:/var/www
+      - ./devops/nginx:/etc/nginx/conf.d
+    networks:
+      - parents_network
+
+networks:
+  parents_network:
+    driver: bridge
