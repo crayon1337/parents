@@ -1,6 +1,8 @@
 <?php
 
-use Illuminate\Http\Request;
+declare(strict_types=1);
+
+use App\Http\Controllers\API\UserController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -14,6 +16,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
+
+Route::group(
+    attributes: [
+        'prefix' => 'v1',
+    ],
+    routes: function (): void {
+        Route::group(
+            attributes: [
+                'prefix' => 'users',
+                'as' => 'users.'
+            ],
+            routes: function (): void {
+                Route::get(uri: '/', action: [UserController::class, 'index'])->name(name: 'index');
+            }
+        );
+    });

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Tests\Feature\User;
 
+use App\Enum\TransactionStatus;
 use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
@@ -22,21 +23,21 @@ class UserControllerTest extends TestCase
         // Assert
         $this->assertCount(10, $usersApiResponse->json(key: 'data'));
         // Assert User 1 data is correct
-        $this->assertEquals(expected: 'd3d29d70-1d25-11e3-8591-034165a3a613', actual: $usersApiResponse->json(key: 'data.1.id'));
-        $this->assertEquals(expected: 'parent1@parent.eu', actual: $usersApiResponse->json(key: 'data.1.email'));
-        $this->assertEquals(expected: Status::Authorized, actual: $usersApiResponse->json(key: 'data.1.status'));
-        $this->assertEquals(expected: 200, actual: $usersApiResponse->json(key: 'data.1.amount'));
-        $this->assertEquals(expected: 'USD', actual: $usersApiResponse->json(key: 'data.1.currency'));
-        $this->assertEquals(expected: 'DataProviderX', actual: $usersApiResponse->json(key: 'data.1.provider'));
-        $this->assertEquals(expected: '2018-11-30', actual: $usersApiResponse->json(key: 'data.1.date'));
+        $this->assertEquals(expected: 'd3d29d70-1d25-11e3-8591-034165a3a613', actual: $usersApiResponse->json(key: 'data.0.id'));
+        $this->assertEquals(expected: 'parent1@parent.eu', actual: $usersApiResponse->json(key: 'data.0.email'));
+        $this->assertEquals(expected: TransactionStatus::Authorized->value, actual: $usersApiResponse->json(key: 'data.0.status'));
+        $this->assertEquals(expected: 10, actual: $usersApiResponse->json(key: 'data.0.amount'));
+        $this->assertEquals(expected: 'USD', actual: $usersApiResponse->json(key: 'data.0.currency'));
+        $this->assertEquals(expected: 'DataProviderX', actual: $usersApiResponse->json(key: 'data.0.provider'));
+        $this->assertEquals(expected: '2018-11-30', actual: $usersApiResponse->json(key: 'data.0.date'));
         // Assert User 2 data is correct
-        $this->assertEquals(expected: '4fc2-a8d1', actual: $usersApiResponse->json(key: 'data.6.id'));
-        $this->assertEquals(expected: 'parent2@parent.eu', actual: $usersApiResponse->json(key: 'data.6.email'));
-        $this->assertEquals(expected: Status::Authorized, actual: $usersApiResponse->json(key: 'data.6.status'));
-        $this->assertEquals(expected: 300, actual: $usersApiResponse->json(key: 'data.6.amount'));
-        $this->assertEquals(expected: 'AED', actual: $usersApiResponse->json(key: 'data.6.currency'));
-        $this->assertEquals(expected: 'DataProviderY', actual: $usersApiResponse->json(key: 'data.6.provider'));
-        $this->assertEquals(expected: '22/12/2018', actual: $usersApiResponse->json(key: 'data.6.date'));
+        $this->assertEquals(expected: 'd3d29d70-1d25-11e3-1337-034165a3a656', actual: $usersApiResponse->json(key: 'data.1.id'));
+        $this->assertEquals(expected: 'parent2@parent.eu', actual: $usersApiResponse->json(key: 'data.1.email'));
+        $this->assertEquals(expected: TransactionStatus::Decline->value, actual: $usersApiResponse->json(key: 'data.1.status'));
+        $this->assertEquals(expected: 150, actual: $usersApiResponse->json(key: 'data.1.amount'));
+        $this->assertEquals(expected: 'EGP', actual: $usersApiResponse->json(key: 'data.1.currency'));
+        $this->assertEquals(expected: 'DataProviderX', actual: $usersApiResponse->json(key: 'data.1.provider'));
+        $this->assertEquals(expected: '2019-10-22', actual: $usersApiResponse->json(key: 'data.1.date'));
     }
 
     /**
@@ -61,11 +62,11 @@ class UserControllerTest extends TestCase
 
         // Assert
         $this->assertCount(expectedCount: 5, haystack: $usersApiResponse->json(key: 'data'));
+        $this->assertEquals(expected: $provider, actual: $usersApiResponse->json(key: 'data.0.provider'));
         $this->assertEquals(expected: $provider, actual: $usersApiResponse->json(key: 'data.1.provider'));
         $this->assertEquals(expected: $provider, actual: $usersApiResponse->json(key: 'data.2.provider'));
         $this->assertEquals(expected: $provider, actual: $usersApiResponse->json(key: 'data.3.provider'));
         $this->assertEquals(expected: $provider, actual: $usersApiResponse->json(key: 'data.4.provider'));
-        $this->assertEquals(expected: $provider, actual: $usersApiResponse->json(key: 'data.5.provider'));
     }
 
     /**
@@ -77,11 +78,11 @@ class UserControllerTest extends TestCase
     public function testUsersApiWouldReturnUsersFilteredByStatus(): void
     {
         // Setup
-        $status = Status::Authorized;
+        $status = TransactionStatus::Authorized->value;
 
         $queryParameters = $this->getQueryParameters(
             parameters: [
-                'status' => $status->value
+                'status' => $status
             ]
         );
 
@@ -89,9 +90,11 @@ class UserControllerTest extends TestCase
         $usersApiResponse = $this->callUsersApi(queryParameters: $queryParameters);
 
         // Assert
-        $this->assertCount(expectedCount: 2, haystack: $usersApiResponse->json(key: 'data'));
-        $this->assertEquals(expected: $status->value, actual: $usersApiResponse->json(key: 'data.1.status'));
-        $this->assertEquals(expected: $status->value, actual: $usersApiResponse->json(key: 'data.2.status'));
+        $this->assertCount(expectedCount: 4, haystack: $usersApiResponse->json(key: 'data'));
+        $this->assertEquals(expected: $status, actual: $usersApiResponse->json(key: 'data.0.status'));
+        $this->assertEquals(expected: $status, actual: $usersApiResponse->json(key: 'data.1.status'));
+        $this->assertEquals(expected: $status, actual: $usersApiResponse->json(key: 'data.2.status'));
+        $this->assertEquals(expected: $status, actual: $usersApiResponse->json(key: 'data.3.status'));
     }
 
     /**
@@ -105,7 +108,7 @@ class UserControllerTest extends TestCase
         // Setup
         $balanceMin = 10;
         $balanceMax = 300;
-        $balanceAvg = 155;
+        $balanceAvg = 150;
 
         $queryParameters = $this->getQueryParameters(
             parameters: [
@@ -118,10 +121,10 @@ class UserControllerTest extends TestCase
         $usersApiResponse = $this->callUsersApi(queryParameters: $queryParameters);
 
         // Assert
-        $this->assertCount(expectedCount: 3, haystack: $usersApiResponse->json(key: 'data'));
-        $this->assertEquals(expected: $balanceMin, actual: $usersApiResponse->json(key: 'data.1.amount'));
-        $this->assertEquals(expected: $balanceAvg, actual: $usersApiResponse->json(key: 'data.2.amount'));
-        $this->assertEquals(expected: $balanceMax, actual: $usersApiResponse->json(key: 'data.3.amount'));
+        $this->assertCount(expectedCount: 5, haystack: $usersApiResponse->json(key: 'data'));
+        $this->assertEquals(expected: $balanceMin, actual: $usersApiResponse->json(key: 'data.0.amount'));
+        $this->assertEquals(expected: $balanceAvg, actual: $usersApiResponse->json(key: 'data.1.amount'));
+        $this->assertEquals(expected: $balanceMax, actual: $usersApiResponse->json(key: 'data.4.amount'));
     }
 
     /**
@@ -145,7 +148,7 @@ class UserControllerTest extends TestCase
         $usersApiResponse = $this->callUsersApi(queryParameters: $queryParameters);
 
         // Assert
-        $this->assertCount(expectedCount: 9, haystack: $usersApiResponse->json(key: 'data'));
+        $this->assertCount(expectedCount: 3, haystack: $usersApiResponse->json(key: 'data'));
     }
 
     /**
@@ -157,7 +160,7 @@ class UserControllerTest extends TestCase
     public function testUsersApiWouldReturnUsersFilteredByBalanceMax(): void
     {
         // Setup
-        $balanceMax = 800;
+        $balanceMax = 600;
 
         $queryParameters = $this->getQueryParameters(
             parameters: [
@@ -169,7 +172,7 @@ class UserControllerTest extends TestCase
         $usersApiResponse = $this->callUsersApi(queryParameters: $queryParameters);
 
         // Assert
-        $this->assertCount(expectedCount: 2, haystack: $usersApiResponse->json(key: 'data'));
+        $this->assertCount(expectedCount: 9, haystack: $usersApiResponse->json(key: 'data'));
     }
 
     /**
@@ -193,11 +196,10 @@ class UserControllerTest extends TestCase
         $usersApiResponse = $this->callUsersApi(queryParameters: $queryParameters);
 
         // Assert
-        $this->assertCount(expectedCount: 4, haystack: $usersApiResponse->json(key: 'data'));
+        $this->assertCount(expectedCount: 3, haystack: $usersApiResponse->json(key: 'data'));
+        $this->assertEquals(expected: $currency, actual: $usersApiResponse->json(key: 'data.0.currency'));
         $this->assertEquals(expected: $currency, actual: $usersApiResponse->json(key: 'data.1.currency'));
         $this->assertEquals(expected: $currency, actual: $usersApiResponse->json(key: 'data.2.currency'));
-        $this->assertEquals(expected: $currency, actual: $usersApiResponse->json(key: 'data.3.currency'));
-        $this->assertEquals(expected: $currency, actual: $usersApiResponse->json(key: 'data.4.currency'));
     }
 
     /**
@@ -212,7 +214,7 @@ class UserControllerTest extends TestCase
         $queryParameters = $this->getQueryParameters(
             parameters: [
                 'provider' => 'DataProviderX',
-                'status' => Status::Authorized,
+                'status' => TransactionStatus::Authorized->value,
                 'balanceMin' => 10,
                 'balanceMax' => 100,
                 'currency' => 'USD'
@@ -223,15 +225,11 @@ class UserControllerTest extends TestCase
         $usersApiResponse = $this->callUsersApi(queryParameters: $queryParameters);
 
         // Assert
-        $this->assertCount(expectedCount: 2, haystack: $usersApiResponse->json(key: 'data'));
-        $this->assertEquals(expected: Status::Authorized, actual: $usersApiResponse->json(key: 'data.1.status'));
-        $this->assertEquals(expected: 10, actual: $usersApiResponse->json(key: 'data.1.amount'));
-        $this->assertEquals(expected: 'USD', actual: $usersApiResponse->json(key: 'data.1.currency'));
-        $this->assertEquals(expected: 'DataProviderX', actual: $usersApiResponse->json(key: 'data.1.provider'));
-        $this->assertEquals(expected: Status::Authorized, actual: $usersApiResponse->json(key: 'data.2.status'));
-        $this->assertEquals(expected: 100, actual: $usersApiResponse->json(key: 'data.2.amount'));
-        $this->assertEquals(expected: 'USD', actual: $usersApiResponse->json(key: 'data.2.currency'));
-        $this->assertEquals(expected: 'DataProviderX', actual: $usersApiResponse->json(key: 'data.2.provider'));
+        $this->assertCount(expectedCount: 1, haystack: $usersApiResponse->json(key: 'data'));
+        $this->assertEquals(expected: TransactionStatus::Authorized->value, actual: $usersApiResponse->json(key: 'data.0.status'));
+        $this->assertEquals(expected: 10, actual: $usersApiResponse->json(key: 'data.0.amount'));
+        $this->assertEquals(expected: 'USD', actual: $usersApiResponse->json(key: 'data.0.currency'));
+        $this->assertEquals(expected: 'DataProviderX', actual: $usersApiResponse->json(key: 'data.0.provider'));
     }
 
     /**
@@ -245,7 +243,7 @@ class UserControllerTest extends TestCase
         // Setup
         $queryParameters = $this->getQueryParameters(
             parameters: [
-                'status' => Status::Refunded,
+                'status' => TransactionStatus::Refunded->value,
                 'balanceMin' => 100,
                 'balanceMax' => 500,
                 'currency' => 'USD'
@@ -257,14 +255,14 @@ class UserControllerTest extends TestCase
 
         // Assert
         $this->assertCount(expectedCount: 2, haystack: $usersApiResponse->json(key: 'data'));
-        $this->assertEquals(expected: Status::Refunded, actual: $usersApiResponse->json(key: 'data.1.status'));
-        $this->assertEquals(expected: 300, actual: $usersApiResponse->json(key: 'data.1.amount'));
+        $this->assertEquals(expected: TransactionStatus::Refunded->value, actual: $usersApiResponse->json(key: 'data.0.status'));
+        $this->assertEquals(expected: 200, actual: $usersApiResponse->json(key: 'data.0.amount'));
+        $this->assertEquals(expected: 'USD', actual: $usersApiResponse->json(key: 'data.0.currency'));
+        $this->assertEquals(expected: 'DataProviderX', actual: $usersApiResponse->json(key: 'data.0.provider'));
+        $this->assertEquals(expected: TransactionStatus::Refunded->value, actual: $usersApiResponse->json(key: 'data.1.status'));
+        $this->assertEquals(expected: 500, actual: $usersApiResponse->json(key: 'data.1.amount'));
         $this->assertEquals(expected: 'USD', actual: $usersApiResponse->json(key: 'data.1.currency'));
         $this->assertEquals(expected: 'DataProviderX', actual: $usersApiResponse->json(key: 'data.1.provider'));
-        $this->assertEquals(expected: Status::Refunded, actual: $usersApiResponse->json(key: 'data.2.status'));
-        $this->assertEquals(expected: 500, actual: $usersApiResponse->json(key: 'data.2.amount'));
-        $this->assertEquals(expected: 'USD', actual: $usersApiResponse->json(key: 'data.2.currency'));
-        $this->assertEquals(expected: 'DataProviderY', actual: $usersApiResponse->json(key: 'data.2.provider'));
     }
 
     /**
@@ -294,6 +292,6 @@ class UserControllerTest extends TestCase
      */
     private function getQueryParameters(array $parameters): string
     {
-        return http_build_query(data: $parameters);
+        return '?' . http_build_query(data: $parameters);
     }
 }

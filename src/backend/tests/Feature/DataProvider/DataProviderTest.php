@@ -2,9 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Tests\Unit\User;
+namespace Tests\Feature\DataProvider;
 
-use PHPUnit\Framework\TestCase;
+use App\Http\Service\DataProvider\XDataProvider\XDataProvider;
+use App\Http\Service\DataProvider\YDataProvider\YDataProvider;
+use Tests\TestCase;
 
 class DataProviderTest extends TestCase
 {
@@ -21,16 +23,14 @@ class DataProviderTest extends TestCase
         $yDataProvider = new YDataProvider();
 
         // Act
-        $xProviderData = $xDataProvider->getUsers();
-        $yProviderData = $yDataProvider->getUsers();
+        $xProviderData = $xDataProvider->getData();
+        $yProviderData = $yDataProvider->getData();
 
         // Assert
         $this->assertNotNull($xProviderData);
         $this->assertCount(5, $xProviderData);
-        $this->assertTrue($xProviderData instanceof UserCollection);
 
         $this->assertNotNull($yProviderData);
         $this->assertCount(5, $yProviderData);
-        $this->assertTrue($yProviderData instanceof UserCollection);
     }
 }
