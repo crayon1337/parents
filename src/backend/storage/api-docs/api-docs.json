@@ -1,0 +1,119 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "Parents API Documentation",
+        "description": "The API hosted by services will be documented below.",
+        "contact": {
+            "email": "mohammedarey2@gmail.com"
+        },
+        "license": {
+            "name": "Nginx 1.17.10",
+            "url": "https://www.nginx.com"
+        },
+        "version": "1.0.0"
+    },
+    "servers": [
+        {
+            "url": "http://localhost:8000",
+            "description": "Parents API Server"
+        }
+    ],
+    "paths": {
+        "/api/v1/users": {
+            "get": {
+                "tags": [
+                    "Users"
+                ],
+                "summary": "Fetches the users along with their transactions",
+                "operationId": "index",
+                "responses": {
+                    "200": {
+                        "description": "Successful operation",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/TransactionResource"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "TransactionResource": {
+                "title": "TransactionResource",
+                "description": "List of transaction objects",
+                "properties": {
+                    "data": {
+                        "title": "Data",
+                        "description": "Data wrapper of the transaction objects",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Transaction"
+                        }
+                    }
+                },
+                "type": "object"
+            },
+            "Transaction": {
+                "title": "Transaction",
+                "description": "Transaction model",
+                "properties": {
+                    "id": {
+                        "title": "ID",
+                        "description": "ID of the transaction",
+                        "type": "string",
+                        "example": "d3d29d70-1d25-11e3-8591-034165a3a613"
+                    },
+                    "email": {
+                        "title": "Email",
+                        "description": "Email of the user",
+                        "type": "string",
+                        "example": "mohammedarey2@gmail.com"
+                    },
+                    "amount": {
+                        "title": "Amount",
+                        "description": "Amount of the transaction",
+                        "type": "integer",
+                        "format": "int32",
+                        "example": "300"
+                    },
+                    "currency": {
+                        "title": "Currency",
+                        "description": "Currency of the amount billed with this transaction",
+                        "type": "string",
+                        "example": "USD"
+                    },
+                    "status": {
+                        "title": "Status",
+                        "description": "Status of the transaction available: (authorized, decline, refunded)",
+                        "type": "string",
+                        "example": "authorized"
+                    },
+                    "date": {
+                        "title": "Date",
+                        "description": "Date of the transaction",
+                        "type": "string",
+                        "example": "2023-10-23"
+                    },
+                    "provider": {
+                        "title": "Provider",
+                        "description": "Payment gateway provider",
+                        "type": "string",
+                        "example": "DataProviderX"
+                    }
+                },
+                "type": "object"
+            }
+        }
+    },
+    "tags": [
+        {
+            "name": "Users",
+            "description": "API Endpoints of Users"
+        }
+    ]
+}

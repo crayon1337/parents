@@ -6,8 +6,25 @@ use App\Http\Service\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
+/**
+ * @OA\Schema(
+ *     description="List of transaction objects",
+ *     title="TransactionResource"
+ * )
+ */
 class TransactionResource extends JsonResource
 {
+    /**
+     * The property below is being used for documentation purposes.
+     *
+     * @OA\Property(
+     *     title="Data",
+     *     description="Data wrapper of the transaction objects"
+     * )
+     * @var Transaction[]
+     */
+    protected array $data;
+
     /**
      * Transform the resource into an array.
      *

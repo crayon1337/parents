@@ -12,8 +12,21 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 class UserController
 {
     /**
+     * @OA\Get(
+     *     path="/api/v1/users",
+     *     summary="Fetches the users along with their transactions",
+     *     operationId="index",
+     *     tags={"Users"},
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successful operation",
+     *         @OA\JsonContent(ref="#/components/schemas/TransactionResource")
+     *     ),
+     * )
+     *
      * @param GetUsersRequest $request
      * @param TransactionInterface $transactionService
+     *
      * @return AnonymousResourceCollection
      */
     public function index(
