@@ -22,7 +22,6 @@ jobs:
       - uses: actions/cache@v2
         id: actions-cache
         with:
-          working-directory: ./src/backend
           path: '${{ steps.composer-cache.outputs.dir }}'
           key: '${{ runner.os }}-composer-${{ hashFiles(''**/composer.lock'') }}'
           restore-keys: |
@@ -31,7 +30,6 @@ jobs:
         uses: actions/cache@v2
         id: vendor-cache
         with:
-          working-directory: ./src/backend
           path: vendor
           key: '${{ runner.OS }}-build-${{ hashFiles(''**/composer.lock'') }}'
       - name: Copy .env
@@ -39,7 +37,6 @@ jobs:
         run: php -r "file_exists('.env') || copy('.env.example', '.env');" # If .env exist, we use that, if otherwise, copy .env.example to .env and use that instead
       - name: Install Dependencies
         working-directory: ./src/backend
-        if: steps.vendor-cache.outputs.cache-hit != 'true'
         run: composer install
       - name: Generate key
         working-directory: ./src/backend
