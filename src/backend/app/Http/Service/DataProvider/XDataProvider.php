@@ -7,37 +7,47 @@ namespace App\Http\Service\DataProvider;
 use App\DTO\Transaction;
 use App\Enum\TransactionStatus;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 
 final class XDataProvider
 {
-    use CanReadFile;
+    use CanReadJsonFile;
 
     /**
-     * @return Collection of Transaction objects
+     * @return array of Transaction objects
      */
-    public function get(): Collection
+    public function get(): array
     {
-        return $this->data->transform(
-            callback: function ($transaction): ?Transaction {
-                if (!$this->arrayHasKeys(
-                    keys: ['parentIdentification', 'parentEmail', 'parentAmount', 'Currency', 'statusCode', 'registrationDate'],
-                    array: $transaction
-                )) {
-                    return null;
-                }
+        $data = [];
 
-                return new Transaction(
-                    id: $transaction['parentIdentification'],
-                    email: $transaction['parentEmail'],
-                    amount: $transaction['parentAmount'],
-                    currency: $transaction['Currency'],
-                    status: $this->getStatus(statusCode: $transaction['statusCode']),
-                    date: Carbon::createFromFormat(format: 'Y-m-d', time: $transaction['registrationDate']),
-                    provider: 'DataProviderX'
-                );
+        foreach ($this->data as $row) {
+            if (!$this->validScheme($row)) {
+                continue;
             }
-        )->filter(fn ($transaction) => !is_null(value: $transaction));
+
+            $data[] = new Transaction(
+                id: $row['parentIdentification'],
+                email: $row['parentEmail'],
+                amount: $row['parentAmount'],
+                currency: $row['Currency'],
+                status: $this->getStatus(statusCode: $row['statusCode']),
+                date: Carbon::createFromFormat(format: 'Y-m-d', time: $row['registrationDate']),
+                provider: 'DataProviderX'
+            );
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param array $row
+     * @return bool
+     */
+    private function validScheme(array $row): bool
+    {
+        return $this->arrayHasKeys(
+            keys: ['parentIdentification', 'parentEmail', 'parentAmount', 'Currency', 'statusCode', 'registrationDate'],
+            array: $row
+        );
     }
 
     /**

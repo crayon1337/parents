@@ -7,46 +7,57 @@ namespace App\Http\Service\DataProvider;
 use App\DTO\Transaction;
 use App\Enum\TransactionStatus;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Collection;
 
 final class YDataProvider
 {
-    use CanReadFile;
+    use CanReadJsonFile;
 
     /**
-     * @return Collection of Transaction objects
+     * @return array of Transaction objects
      */
-    public function get(): Collection
+    public function get(): array
     {
-        return $this->data->transform(
-            callback: function ($transaction): ?Transaction {
-                if (!$this->arrayHasKeys(keys: ['id', 'email', 'balance', 'currency', 'status', 'created_at'], array: $transaction)) {
-                    return null;
-                }
+        $data = [];
 
-                return new Transaction(
-                    id: $transaction['id'],
-                    email: $transaction['email'],
-                    amount: $transaction['balance'],
-                    currency: $transaction['currency'],
-                    status: $this->getStatus(statusCode: $transaction['status']),
-                    date: Carbon::createFromFormat(format: 'd/m/Y', time: $transaction['created_at']),
-                    provider: 'DataProviderY'
-                );
+        foreach ($this->data as $row) {
+            if (!$this->validScheme($row)) {
+                continue;
             }
-        )->filter(fn ($transaction) => !is_null(value: $transaction));
+
+            $data[] = new Transaction(
+                id: $row['id'],
+                email: $row['email'],
+                amount: $row['balance'],
+                currency: $row['currency'],
+                status: $this->getStatus(statusCode: $row['status']),
+                date: Carbon::createFromFormat(format: 'd/m/Y', time: $row['created_at']),
+                provider: 'DataProviderY'
+            );
+        }
+
+        return $data;
+    }
+
+    /**
+     * @param array $row
+     * @return bool
+     */
+    private function validScheme(array $row): bool
+    {
+        return $this->arrayHasKeys(keys: ['id', 'email', 'balance', 'currency', 'status', 'created_at'], array: $row);
     }
 
     /**
      * @param int $statusCode
-     * @return TransactionStatus
+     * @return TransactionStatus|null
      */
-    private function getStatus(int $statusCode): TransactionStatus
+    private function getStatus(int $statusCode): ?TransactionStatus
     {
         return match ($statusCode) {
             100 => TransactionStatus::Authorized,
             200 => TransactionStatus::Decline,
-            300 => TransactionStatus::Refunded
+            300 => TransactionStatus::Refunded,
+            default => null
         };
     }
 }

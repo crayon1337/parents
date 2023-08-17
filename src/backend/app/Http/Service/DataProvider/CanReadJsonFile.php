@@ -4,12 +4,11 @@ declare(strict_types=1);
 
 namespace App\Http\Service\DataProvider;
 
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 
-trait CanReadFile
+trait CanReadJsonFile
 {
-    public function __construct(protected Collection $data)
+    public function __construct(protected array $data)
     {
     }
 
@@ -17,7 +16,7 @@ trait CanReadFile
      * This function will read data from a file and transform the data into DTO.
      *
      * @param string $filePath
-     * @return YDataProvider|XDataProvider|CanReadFile
+     * @return YDataProvider|XDataProvider|CanReadJsonFile
      */
     public static function make(string $filePath): self
     {
@@ -25,7 +24,7 @@ trait CanReadFile
 
         $data = json_decode(json: $fileContent, associative: true);
 
-        return new self(data: collect(value: $data));
+        return new self(data: $data);
     }
 
     /**

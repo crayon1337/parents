@@ -28,12 +28,10 @@ $ docker-compose exec app php artisan key:generate
 ```
 - The application will be accessible on `http://localhost:8000`
 
-## Providers
-The current supported providers are X and Y and both of them provides data to our application through JSON files. 
+## Data Providers
+The current supported data providers are X and Y and both of them provides data to our application through JSON files.
 
-You may want to add any providers as needed.
-It should be easy to set up new providers in order to make this application scalable.
-
+You may setup new providers as needed. You just have to implement a method that would return collection of data and append that provider to the providers array in TransactionService
 ## Coding Standards
 Following [PSR-12](https://www.php-fig.org/psr/psr-12/) which is the most famous coding standards for PHP out there. Which means, that would make the maintenance of this application a lot easier for various developers.
 
@@ -51,20 +49,17 @@ $ ./vendor/bin/pint --test
 
 ## Tests
 Flow Test cases: 
+- Assert that the API documentation route is accessible on /api/docs.
 - Assert that the providers data are readable. And it is possible to map the data to DTOs. 
-- Assert that the providers data are collected into a UserCollection
 - Assert that by default the API would expose all users collected from different providers
 - Assert that it is possible to filter returned users by the given provider
+- Assert that the endpoint will return 422 if the given provider is too long
 - Assert that it is possible to filter the users status code (authorized, decline, refunded)
+- Assert that the endpoint will return 422 if the given status is invalid
 - Assert that it is possible to filter the users using balance (Min and Max)
+- Assert that the endpoint will return 422 if the given balanceMax is lower than balanceMin
 - Assert that it is possible to filter the users using currency
 - Assert that it is possible to combine all filters together
-
-## Pagination
-Pagination will be available through query parameters. 
-
-- `page` is used to navigate between pages
-- `limit` is used to determine how many records should the API return (Max: 100)
 
 ## API versioning
 The current stable release of this application's API is `Version 1`. 
@@ -74,7 +69,13 @@ That being said, the API routes of this application will be prefixed with `/api/
 ## API documentation
 This application uses [Swagger](https://swagger.io/) to document its APIs.
 
-Swagger documentation will be available at `https://localhost:8000/api/docs`
+Swagger documentation will be available at `http://localhost:8000/api/docs`
 
 ## CI - CD
 This application uses [GitHub Actions](https://docs.github.com/en/actions) to verify that everything is green on commits to the `main` branch.
+
+## Disclaimer
+I've had good experience solving this problem as it tackles several concerns to handle.
+
+However, I think the route should've been named `/transactions` since we are actually returning transactions, and we do not have data scheme for users.
+I could have prepared users data using the emails in the transactions scheme. But, I just want to stick to the scope of this problem.
