@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature\DataProvider;
 
-use App\Http\Service\DataProvider\XDataProvider\XDataProvider;
-use App\Http\Service\DataProvider\YDataProvider\YDataProvider;
+use App\Http\Service\DataProvider\XDataProvider;
+use App\Http\Service\DataProvider\YDataProvider;
 use Tests\TestCase;
 
 class DataProviderTest extends TestCase
@@ -19,18 +19,18 @@ class DataProviderTest extends TestCase
     public function testProvidersDataAreBeingCollectedAndStoredIntoCollection(): void
     {
         // Setup
-        $xDataProvider = new XDataProvider();
-        $yDataProvider = new YDataProvider();
+        $xDataProvider = XDataProvider::make(filePath: 'DataProviderX.json');
+        $yDataProvider = YDataProvider::make(filePath: 'DataProviderY.json');
 
         // Act
-        $xProviderData = $xDataProvider->getData(filePath: 'DataProviderX.json');
-        $yProviderData = $yDataProvider->getData(filePath: 'DataProviderY.json');
+        $xProviderData = $xDataProvider->get();
+        $yProviderData = $yDataProvider->get();
 
         // Assert
-        $this->assertNotNull($xProviderData);
-        $this->assertCount(5, $xProviderData);
+        $this->assertNotNull(actual: $xProviderData);
+        $this->assertCount(expectedCount: 5, haystack: $xProviderData);
 
-        $this->assertNotNull($yProviderData);
-        $this->assertCount(5, $yProviderData);
+        $this->assertNotNull(actual: $yProviderData);
+        $this->assertCount(expectedCount: 5, haystack: $yProviderData);
     }
 }

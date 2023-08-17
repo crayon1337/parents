@@ -2,34 +2,23 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Service\DataProvider\YDataProvider;
+namespace App\Http\Service\DataProvider;
 
 use App\DTO\Transaction;
 use App\Enum\TransactionStatus;
-use App\Http\Service\DataProvider\BaseDataProvider;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 
-final class YDataProvider extends BaseDataProvider
+final class YDataProvider
 {
-    /**
-     * @param string $filePath
-     * @return Collection
-     */
-    public function getData(string $filePath): Collection
-    {
-        $data = parent::getData($filePath);
-
-        return $this->getTransformedCollection(transactions: $data);
-    }
+    use CanReadFile;
 
     /**
-     * @param Collection $transactions
      * @return Collection of Transaction objects
      */
-    protected function getTransformedCollection(Collection $transactions): Collection
+    public function get(): Collection
     {
-        return $transactions->transform(
+        return $this->data->transform(
             callback: function ($transaction): ?Transaction {
                 if (!$this->arrayHasKeys(keys: ['id', 'email', 'balance', 'currency', 'status', 'created_at'], array: $transaction)) {
                     return null;

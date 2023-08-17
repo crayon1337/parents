@@ -7,21 +7,25 @@ namespace App\Http\Service\DataProvider;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 
-class BaseDataProvider
+trait CanReadFile
 {
+    public function __construct(protected Collection $data)
+    {
+    }
+
     /**
      * This function will read data from a file and transform the data into DTO.
      *
      * @param string $filePath
-     * @return Collection of Transaction objects
+     * @return YDataProvider|XDataProvider|CanReadFile
      */
-    protected function getData(string $filePath): Collection
+    public static function make(string $filePath): self
     {
         $fileContent = File::get(storage_path(path: $filePath));
 
         $data = json_decode(json: $fileContent, associative: true);
 
-        return collect(value: $data);
+        return new self(data: collect(value: $data));
     }
 
     /**
@@ -31,7 +35,7 @@ class BaseDataProvider
      * @param array $array
      * @return bool
      */
-    protected function arrayHasKeys(array $keys, array $array): bool
+    private function arrayHasKeys(array $keys, array $array): bool
     {
         foreach ($keys as $key) {
             if (!array_key_exists($key, $array)) {
