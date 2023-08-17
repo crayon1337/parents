@@ -17,9 +17,7 @@ final class TransactionService implements TransactionContract
      */
     public function getTransactions(): Collection
     {
-        $transactions = collect();
-
-        $transactions->add([
+        $transactions = collect([
             (new XDataProvider())->getData(filePath: 'DataProviderX.json'),
             (new YDataProvider())->getData(filePath: 'DataProviderY.json')
         ]);
