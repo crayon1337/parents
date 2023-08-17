@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace App\Http\Service;
+namespace App\DTO;
 
 use App\Enum\TransactionStatus;
 use Illuminate\Support\Carbon;

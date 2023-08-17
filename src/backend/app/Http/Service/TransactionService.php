@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Service;
 
-use App\Http\Service\DataProvider\BaseProvider;
-use App\Http\Service\DataProvider\XDataProvider\XDataProvider;
-use App\Http\Service\DataProvider\YDataProvider\YDataProvider;
+use App\DTO\Transaction;
+use App\Http\Requests\GetUsersRequest;
+use App\Http\Service\DataProvider\XDataProvider\XDataDataProvider;
+use App\Http\Service\DataProvider\YDataProvider\YDataDataProvider;
 use Illuminate\Support\Collection;
 
 final class TransactionService implements TransactionInterface
@@ -16,23 +17,43 @@ final class TransactionService implements TransactionInterface
      */
     public function getTransactions(): Collection
     {
-        $transactions = collect();
-
-        $providerXData = $this->resolveProviderData(new XDataProvider());
-        $providerYData = $this->resolveProviderData(new YDataProvider());
-
-        $transactions->add($providerXData);
-        $transactions->add($providerYData);
+        $transactions = collect([
+            (new XDataDataProvider())->getData(),
+            (new YDataDataProvider())->getData()
+        ]);
 
         return $transactions->flatten();
     }
 
     /**
-     * @param BaseProvider $provider
+     * Filters the given transactions using inputs from the given request.
+     *
+     * @param GetUsersRequest $request
+     * @param Collection $transactions
      * @return Collection
      */
-    private function resolveProviderData(BaseProvider $provider): Collection
+    public function filterTransactions(GetUsersRequest $request, Collection $transactions): Collection
     {
-        return $provider->getData();
+        // Define each supported filter and the condition to be applied for each filter.
+        $filters = [
+            'provider' => fn ($value, Transaction $transaction): bool => $transaction->getProvider() === $value,
+            'status' => fn ($value, Transaction $transaction): bool => $transaction->getStatus()->value === $value,
+            'balanceMin' => fn ($value, Transaction $transaction): bool => $transaction->getAmount() >= $value,
+            'balanceMax' => fn ($value, Transaction $transaction): bool => $transaction->getAmount() <= $value,
+            'currency' => fn ($value, Transaction $transaction): bool => $transaction->getCurrency() === $value,
+        ];
+
+        // Iterate through the filters and filter the transactions collection using the callback defined above.
+        foreach ($filters as $key => $filter) {
+            $value = $request->input($key);
+
+            if ($value !== null) {
+                $transactions = $transactions->filter(
+                    callback: fn (Transaction $transaction): bool => $filter($value, $transaction)
+                );
+            }
+        }
+
+        return $transactions;
     }
 }

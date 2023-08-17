@@ -6,7 +6,10 @@ namespace App\Http\Service\DataProvider;
 
 use Illuminate\Support\Collection;
 
-abstract class BaseProvider
+abstract class BaseDataProvider
 {
+    /**
+     * @return Collection of Transaction objects
+     */
     abstract public function getData(): Collection;
 }

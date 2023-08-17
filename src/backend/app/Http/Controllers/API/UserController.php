@@ -35,6 +35,8 @@ class UserController
     ): AnonymousResourceCollection {
         $transactions = $transactionService->getTransactions();
 
+        $transactions = $transactionService->filterTransactions(request: $request, transactions: $transactions);
+
         return TransactionResource::collection(resource: $transactions);
     }
 }

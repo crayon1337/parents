@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Http\Service\DataProvider\YDataProvider;
 
+use App\DTO\Transaction;
 use App\Enum\TransactionStatus;
-use App\Http\Service\DataProvider\BaseProvider;
-use App\Http\Service\Transaction;
+use App\Http\Service\DataProvider\BaseDataProvider;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 
-final class YDataProvider extends BaseProvider
+final class YDataDataProvider extends BaseDataProvider
 {
     public function getData(): Collection
     {
@@ -19,18 +19,18 @@ final class YDataProvider extends BaseProvider
 
         $data = json_decode(json: $fileContent, associative: true);
 
-        $data = $this->hydrateTransactionObject(transactions: $data);
+        $data = collect(value: $data);
 
-        return collect(value: $data);
+        return $this->getTransformedCollection(transactions: $data);
     }
 
     /**
-     * @param array $transactions
-     * @return Transaction[]
+     * @param Collection $transactions
+     * @return Collection of Transaction objects
      */
-    private function hydrateTransactionObject(array $transactions): array
+    private function getTransformedCollection(Collection $transactions): Collection
     {
-        return array_map(
+        return $transactions->transform(
             callback: fn ($transaction) => new Transaction(
                 id: $transaction['id'],
                 email: $transaction['email'],
@@ -39,8 +39,7 @@ final class YDataProvider extends BaseProvider
                 status: $this->getStatus(statusCode: $transaction['status']),
                 date: Carbon::createFromFormat(format: 'd/m/Y', time: $transaction['created_at']),
                 provider: 'DataProviderY'
-            ),
-            array: $transactions
+            )
         );
     }
 

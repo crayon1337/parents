@@ -2,7 +2,7 @@
 
 namespace App\Http\Resources;
 
-use App\Http\Service\Transaction;
+use app\DTO\Transaction;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
