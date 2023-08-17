@@ -27,6 +27,26 @@
                 "summary": "Fetches the users along with their transactions",
                 "operationId": "index",
                 "responses": {
+                    "422": {
+                        "description": "Invalid or missing payload",
+                        "content": {
+                            "application/json": {
+                                "schema": {},
+                                "examples": {
+                                    "Unproessable request response": {
+                                        "summary": "",
+                                        "value": {
+                                            "errors": {
+                                                "provider": [
+                                                    "The provider field must not be greater than 20 characters."
+                                                ]
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
                     "200": {
                         "description": "Successful operation",
                         "content": {
@@ -43,21 +63,6 @@
     },
     "components": {
         "schemas": {
-            "TransactionResource": {
-                "title": "TransactionResource",
-                "description": "List of transaction objects",
-                "properties": {
-                    "data": {
-                        "title": "Data",
-                        "description": "Data wrapper of the transaction objects",
-                        "type": "array",
-                        "items": {
-                            "$ref": "#/components/schemas/Transaction"
-                        }
-                    }
-                },
-                "type": "object"
-            },
             "Transaction": {
                 "title": "Transaction",
                 "description": "Transaction model",
@@ -91,7 +96,8 @@
                         "title": "Status",
                         "description": "Status of the transaction available: (authorized, decline, refunded)",
                         "type": "string",
-                        "example": "authorized"
+                        "example": "authorized",
+                        "nullable": true
                     },
                     "date": {
                         "title": "Date",
@@ -104,6 +110,21 @@
                         "description": "Payment gateway provider",
                         "type": "string",
                         "example": "DataProviderX"
+                    }
+                },
+                "type": "object"
+            },
+            "TransactionResource": {
+                "title": "TransactionResource",
+                "description": "List of transaction objects",
+                "properties": {
+                    "data": {
+                        "title": "Data",
+                        "description": "Data wrapper of the transaction objects",
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Transaction"
+                        }
                     }
                 },
                 "type": "object"

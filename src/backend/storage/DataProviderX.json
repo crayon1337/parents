@@ -38,5 +38,11 @@
         "statusCode": 3,
         "registrationDate": "2022-11-30",
         "parentIdentification": "d3d29d70-1d25-11e3-1340-034165a3a688"
+    },
+    {
+        "parentAmount": 300,
+        "Currency": "USD",
+        "registrationDate": "2022-11-30",
+        "parentIdentification": "d3d29d70-1d25-11e3-1340-034165a3a688"
     }
 ]

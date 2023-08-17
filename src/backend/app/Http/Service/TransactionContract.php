@@ -5,7 +5,7 @@ namespace App\Http\Service;
 use App\Http\Requests\GetUsersRequest;
 use Illuminate\Support\Collection;
 
-interface TransactionInterface
+interface TransactionContract
 {
     /**
      * @return Collection

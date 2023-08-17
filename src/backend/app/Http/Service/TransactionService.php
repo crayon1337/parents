@@ -6,20 +6,22 @@ namespace App\Http\Service;
 
 use App\DTO\Transaction;
 use App\Http\Requests\GetUsersRequest;
-use App\Http\Service\DataProvider\XDataProvider\XDataDataProvider;
-use App\Http\Service\DataProvider\YDataProvider\YDataDataProvider;
+use App\Http\Service\DataProvider\XDataProvider\XDataProvider;
+use App\Http\Service\DataProvider\YDataProvider\YDataProvider;
 use Illuminate\Support\Collection;
 
-final class TransactionService implements TransactionInterface
+final class TransactionService implements TransactionContract
 {
     /**
      * @return Collection
      */
     public function getTransactions(): Collection
     {
-        $transactions = collect([
-            (new XDataDataProvider())->getData(),
-            (new YDataDataProvider())->getData()
+        $transactions = collect();
+
+        $transactions->add([
+            (new XDataProvider())->getData(filePath: 'DataProviderX.json'),
+            (new YDataProvider())->getData(filePath: 'DataProviderY.json')
         ]);
 
         return $transactions->flatten();

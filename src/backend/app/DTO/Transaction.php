@@ -61,9 +61,9 @@ final class Transaction
          *     description="Status of the transaction available: (authorized, decline, refunded)",
          *     title="Status",
          * )
-         * @var string
+         * @var string|null
          */
-        protected TransactionStatus $status,
+        protected ?TransactionStatus $status,
         /**
          * @OA\Property(
          *     example="2023-10-23",
@@ -118,9 +118,9 @@ final class Transaction
     }
 
     /**
-     * @return TransactionStatus
+     * @return TransactionStatus|null
      */
-    public function getStatus(): TransactionStatus
+    public function getStatus(): ?TransactionStatus
     {
         return $this->status;
     }

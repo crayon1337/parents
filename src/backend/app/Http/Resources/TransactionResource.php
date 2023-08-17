@@ -40,7 +40,7 @@ class TransactionResource extends JsonResource
             'email' => $transaction->getEmail(),
             'amount' => $transaction->getAmount(),
             'currency' => $transaction->getCurrency(),
-            'status' => $transaction->getStatus()->value,
+            'status' => $transaction->getStatus()?->value,
             'date' => $transaction->getDate()->format('Y-m-d'),
             'provider' => $transaction->getProvider()
         ];

@@ -6,7 +6,7 @@ namespace App\Http\Controllers\API;
 
 use App\Http\Requests\GetUsersRequest;
 use App\Http\Resources\TransactionResource;
-use App\Http\Service\TransactionInterface;
+use App\Http\Service\TransactionContract;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class UserController
@@ -18,6 +18,19 @@ class UserController
      *     operationId="index",
      *     tags={"Users"},
      *     @OA\Response(
+     *         response=422,
+     *         description="Invalid or missing payload",
+     *         @OA\JsonContent(
+     *             @OA\Examples(example="Unproessable request response", value={
+     *                 "errors": {
+     *                   "provider": {
+     *                     "The provider field must not be greater than 20 characters.",
+     *                   }
+     *                 },
+     *             }, summary="")
+     *         )
+     *     ),
+     *     @OA\Response(
      *         response=200,
      *         description="Successful operation",
      *         @OA\JsonContent(ref="#/components/schemas/TransactionResource")
@@ -25,13 +38,13 @@ class UserController
      * )
      *
      * @param GetUsersRequest $request
-     * @param TransactionInterface $transactionService
+     * @param TransactionContract $transactionService
      *
      * @return AnonymousResourceCollection
      */
     public function index(
         GetUsersRequest $request,
-        TransactionInterface $transactionService
+        TransactionContract $transactionService
     ): AnonymousResourceCollection {
         $transactions = $transactionService->getTransactions();
 

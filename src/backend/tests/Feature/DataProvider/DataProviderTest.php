@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Tests\Feature\DataProvider;
 
-use App\Http\Service\DataProvider\XDataProvider\XDataDataProvider;
-use App\Http\Service\DataProvider\YDataProvider\YDataDataProvider;
+use App\Http\Service\DataProvider\XDataProvider\XDataProvider;
+use App\Http\Service\DataProvider\YDataProvider\YDataProvider;
 use Tests\TestCase;
 
 class DataProviderTest extends TestCase
@@ -19,12 +19,12 @@ class DataProviderTest extends TestCase
     public function testProvidersDataAreBeingCollectedAndStoredIntoCollection(): void
     {
         // Setup
-        $xDataProvider = new XDataDataProvider();
-        $yDataProvider = new YDataDataProvider();
+        $xDataProvider = new XDataProvider();
+        $yDataProvider = new YDataProvider();
 
         // Act
-        $xProviderData = $xDataProvider->getData();
-        $yProviderData = $yDataProvider->getData();
+        $xProviderData = $xDataProvider->getData(filePath: 'DataProviderX.json');
+        $yProviderData = $yDataProvider->getData(filePath: 'DataProviderY.json');
 
         // Assert
         $this->assertNotNull($xProviderData);
