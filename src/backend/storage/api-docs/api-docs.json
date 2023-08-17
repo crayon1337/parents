@@ -26,6 +26,43 @@
                 ],
                 "summary": "Fetches the users along with their transactions",
                 "operationId": "index",
+                "parameters": [
+                    {
+                        "name": "provider",
+                        "in": "query",
+                        "description": "Payment gateway provider",
+                        "required": false,
+                        "example": "DataProviderX"
+                    },
+                    {
+                        "name": "status",
+                        "in": "query",
+                        "description": "Status of the transaction. Available: authorized, decline and refunded.",
+                        "required": false,
+                        "example": "authorized"
+                    },
+                    {
+                        "name": "balanceMin",
+                        "in": "query",
+                        "description": "Minimum balance desired. The results will be filtered using this parameter to return the transactions start with the given amount.",
+                        "required": false,
+                        "example": "10"
+                    },
+                    {
+                        "name": "balanceMax",
+                        "in": "query",
+                        "description": "Maximum balance desired. The results will be filtered using this parameter to return the transactions end at the given amount.",
+                        "required": false,
+                        "example": "100"
+                    },
+                    {
+                        "name": "currency",
+                        "in": "query",
+                        "description": "The currency will be used to filter results.",
+                        "required": false,
+                        "example": "USD"
+                    }
+                ],
                 "responses": {
                     "422": {
                         "description": "Invalid or missing payload",
